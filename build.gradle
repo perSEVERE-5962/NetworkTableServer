@@ -1,0 +1,40 @@
+apply plugin: 'java'
+
+apply plugin:'application'
+mainClassName = "networktableserver.NetworkTableServer"
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile  files('/home/dlemasurier/wpilib/java/current/lib/wpiutil.jar')
+    compile  files('/home/dlemasurier/wpilib/java/current/lib/ntcore-4.1.0.jar')
+    compile  files('/home/dlemasurier/wpilib/java/current/lib/ntcore.jar')
+}
+
+tasks.withType(Test) { 
+    testLogging {
+        exceptionFormat "full"
+        events "started", "skipped", "passed", "failed"
+        showStandardStreams true
+    }
+  systemProperty "java.library.path", "/home/dlemasurier/wpilib/java/current/lib"
+}
+
+
+task bundleJar (type: Jar) {
+    baseName = 'networktableserver'
+    version =  '0.1.0'
+    manifest {
+        attributes(
+                'Main-Class': 'networktableserver.NetworkTableServer'
+        )
+    }
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar 
+}
+
+jar.dependsOn bundleJar
+
+
