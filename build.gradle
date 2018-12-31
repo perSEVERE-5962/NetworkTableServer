@@ -7,10 +7,22 @@ repositories {
     jcenter()
 }
 
+String ntCoreJNIJarName;
+
+switch(System.getProperty('os.name').toLowerCase().split()[0]) {
+  case 'windows':
+    ntCoreJNIJarName = 'ntcore-jni*windows*.jar' 
+    break
+  case 'linux':
+    ntCoreJNIJarName = 'ntcore-jni*linux*.jar' 
+    break
+  default:
+    throw new Exception('Unknown OS')
+}
 dependencies {
-    compile  files('/home/dlemasurier/wpilib/java/current/lib/wpiutil.jar')
-    compile  files('/home/dlemasurier/wpilib/java/current/lib/ntcore-4.1.0.jar')
-    compile  files('/home/dlemasurier/wpilib/java/current/lib/ntcore.jar')
+    compile  fileTree(dir: "${System.env.WPILIB}/java/current/lib", include: "wpiutil*.jar")
+    compile  fileTree(dir: "${System.env.WPILIB}/java/current/lib", include: "ntcore-java*.jar")
+    compile  fileTree(dir: "${System.env.WPILIB}/java/current/lib", include: ntCoreJNIJarName)
 }
 
 tasks.withType(Test) { 
@@ -19,7 +31,7 @@ tasks.withType(Test) {
         events "started", "skipped", "passed", "failed"
         showStandardStreams true
     }
-  systemProperty "java.library.path", "/home/dlemasurier/wpilib/java/current/lib"
+  systemProperty "java.library.path", "${System.env.WPILIB}/java/current/lib"
 }
 
 
